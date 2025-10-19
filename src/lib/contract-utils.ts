@@ -1,4 +1,7 @@
 import { ethers } from 'ethers';
+type Eip1193Provider = ethers.Eip1193Provider;
+
+type Provider = ethers.BrowserProvider | ethers.JsonRpcSigner | Eip1193Provider;
 import DiwaliLightsABI from '../contracts/DiwaliLightsABI.json';
 import DiwaliTokenABI from '../contracts/DiwaliTokenABI.json';
 
@@ -18,7 +21,7 @@ export const DIWALI_LIGHTS_CONTRACT_ADDRESS = CONTRACT_ADDRESS || '';
 export const DIWALI_TOKEN_CONTRACT_ADDRESS = TOKEN_ADDRESS || '';
 
 export async function submitDiwaliImage(
-  provider: any,
+  provider: Eip1193Provider | ethers.BrowserProvider | ethers.JsonRpcSigner,
   imageUrl: string,
   ipfsHash: string,
   oracleFee: string
@@ -33,7 +36,9 @@ export async function submitDiwaliImage(
     console.log('Image URL:', imageUrl);
     console.log('IPFS Hash:', ipfsHash);
 
-    const ethersProvider = new ethers.BrowserProvider(provider);
+    const ethersProvider = provider instanceof ethers.BrowserProvider || provider instanceof ethers.JsonRpcSigner 
+    ? provider 
+    : new ethers.BrowserProvider(provider);
     const signer = await ethersProvider.getSigner();
     
     // Check if we're connected to the correct network
@@ -114,13 +119,18 @@ export async function submitDiwaliImage(
 }
 
 export async function processAIScore(
-  provider: any,
+  provider: Eip1193Provider | ethers.BrowserProvider | ethers.JsonRpcSigner,
   requestId: string
 ) {
   if (!provider) throw new Error('No provider available');
 
-  const ethersProvider = new ethers.BrowserProvider(provider);
-  const signer = await ethersProvider.getSigner();
+  const ethersProvider = provider instanceof ethers.JsonRpcSigner 
+    ? provider.provider as ethers.BrowserProvider 
+    : (provider instanceof ethers.BrowserProvider ? provider : new ethers.BrowserProvider(provider));
+  
+  const signer = provider instanceof ethers.JsonRpcSigner 
+    ? provider 
+    : await ethersProvider.getSigner();
   const contract = new ethers.Contract(
     DIWALI_LIGHTS_CONTRACT_ADDRESS,
     DiwaliLightsABI,
@@ -155,14 +165,19 @@ export async function processAIScore(
 }
 
 export async function voteOnSubmission(
-  provider: any,
+  provider: Eip1193Provider | ethers.BrowserProvider | ethers.JsonRpcSigner,
   imageUrl: string,
   score: number
 ) {
   if (!provider) throw new Error('No provider available');
 
-  const ethersProvider = new ethers.BrowserProvider(provider);
-  const signer = await ethersProvider.getSigner();
+  const ethersProvider = provider instanceof ethers.JsonRpcSigner 
+    ? provider.provider as ethers.BrowserProvider 
+    : (provider instanceof ethers.BrowserProvider ? provider : new ethers.BrowserProvider(provider));
+  
+  const signer = provider instanceof ethers.JsonRpcSigner 
+    ? provider 
+    : await ethersProvider.getSigner();
   const contract = new ethers.Contract(
     DIWALI_LIGHTS_CONTRACT_ADDRESS,
     DiwaliLightsABI,
@@ -197,14 +212,19 @@ export async function voteOnSubmission(
 }
 
 export async function batchVoteOnSubmissions(
-  provider: any,
+  provider: Eip1193Provider | ethers.BrowserProvider | ethers.JsonRpcSigner,
   imageUrls: string[],
   scores: number[]
 ) {
   if (!provider) throw new Error('No provider available');
 
-  const ethersProvider = new ethers.BrowserProvider(provider);
-  const signer = await ethersProvider.getSigner();
+  const ethersProvider = provider instanceof ethers.JsonRpcSigner 
+    ? provider.provider as ethers.BrowserProvider 
+    : (provider instanceof ethers.BrowserProvider ? provider : new ethers.BrowserProvider(provider));
+  
+  const signer = provider instanceof ethers.JsonRpcSigner 
+    ? provider 
+    : await ethersProvider.getSigner();
   const contract = new ethers.Contract(
     DIWALI_LIGHTS_CONTRACT_ADDRESS,
     DiwaliLightsABI,
@@ -239,13 +259,18 @@ export async function batchVoteOnSubmissions(
 }
 
 export async function calculateAndDistributeRewards(
-  provider: any,
+  provider: Eip1193Provider | ethers.BrowserProvider | ethers.JsonRpcSigner,
   imageUrl: string
 ) {
   if (!provider) throw new Error('No provider available');
 
-  const ethersProvider = new ethers.BrowserProvider(provider);
-  const signer = await ethersProvider.getSigner();
+  const ethersProvider = provider instanceof ethers.JsonRpcSigner 
+    ? provider.provider as ethers.BrowserProvider 
+    : (provider instanceof ethers.BrowserProvider ? provider : new ethers.BrowserProvider(provider));
+  
+  const signer = provider instanceof ethers.JsonRpcSigner 
+    ? provider 
+    : await ethersProvider.getSigner();
   const contract = new ethers.Contract(
     DIWALI_LIGHTS_CONTRACT_ADDRESS,
     DiwaliLightsABI,
@@ -284,13 +309,18 @@ export async function calculateAndDistributeRewards(
 }
 
 export async function batchDistributeRewards(
-  provider: any,
+  provider: Eip1193Provider | ethers.BrowserProvider | ethers.JsonRpcSigner,
   imageUrls: string[]
 ) {
   if (!provider) throw new Error('No provider available');
 
-  const ethersProvider = new ethers.BrowserProvider(provider);
-  const signer = await ethersProvider.getSigner();
+  const ethersProvider = provider instanceof ethers.JsonRpcSigner 
+    ? provider.provider as ethers.BrowserProvider 
+    : (provider instanceof ethers.BrowserProvider ? provider : new ethers.BrowserProvider(provider));
+  
+  const signer = provider instanceof ethers.JsonRpcSigner 
+    ? provider 
+    : await ethersProvider.getSigner();
   const contract = new ethers.Contract(
     DIWALI_LIGHTS_CONTRACT_ADDRESS,
     DiwaliLightsABI,
@@ -325,12 +355,14 @@ export async function batchDistributeRewards(
 }
 
 export async function getSubmission(
-  provider: any,
+  provider: Eip1193Provider | ethers.BrowserProvider | ethers.JsonRpcSigner,
   imageUrl: string
 ) {
   if (!provider) throw new Error('No provider available');
 
-  const ethersProvider = new ethers.BrowserProvider(provider);
+  const ethersProvider = provider instanceof ethers.BrowserProvider || provider instanceof ethers.JsonRpcSigner 
+    ? provider 
+    : new ethers.BrowserProvider(provider);
   const contract = new ethers.Contract(
     DIWALI_LIGHTS_CONTRACT_ADDRESS,
     DiwaliLightsABI,
@@ -352,10 +384,22 @@ export async function getSubmission(
   };
 }
 
-export async function getActiveSubmissions(provider: any) {
+export async function getActiveSubmissions(provider: ethers.BrowserProvider | ethers.JsonRpcSigner): Promise<Array<{
+  imageUrl: string;
+  submitter: string;
+  ipfsHash: string;
+  score: number;
+  isApproved: boolean;
+  timestamp: number;
+  voters: string[];
+  totalVotes: number;
+  totalScore: number;
+}>> {
   if (!provider) throw new Error('No provider available');
 
-  const ethersProvider = new ethers.BrowserProvider(provider);
+  const ethersProvider = provider instanceof ethers.BrowserProvider || provider instanceof ethers.JsonRpcSigner 
+    ? provider 
+    : new ethers.BrowserProvider(provider);
   const contract = new ethers.Contract(
     DIWALI_LIGHTS_CONTRACT_ADDRESS,
     DiwaliLightsABI,
@@ -365,10 +409,17 @@ export async function getActiveSubmissions(provider: any) {
   return await contract.getActiveSubmissions();
 }
 
-export async function getUserStats(provider: any, address: string) {
+export async function getUserStats(provider: ethers.BrowserProvider | ethers.JsonRpcSigner, address: string): Promise<{
+  submissionCount: number;
+  totalRewards: string;
+  totalVotes: number;
+  averageScore: number;
+}> {
   if (!provider) throw new Error('No provider available');
 
-  const ethersProvider = new ethers.BrowserProvider(provider);
+  const ethersProvider = provider instanceof ethers.BrowserProvider || provider instanceof ethers.JsonRpcSigner 
+    ? provider 
+    : new ethers.BrowserProvider(provider);
   const contract = new ethers.Contract(
     DIWALI_LIGHTS_CONTRACT_ADDRESS,
     DiwaliLightsABI,
@@ -378,16 +429,32 @@ export async function getUserStats(provider: any, address: string) {
   const stats = await contract.getUserStats(address);
 
   return {
-    submissionsCount: Number(stats.submissionsCount),
+    submissionCount: Number(stats.submissionCount),
     totalRewards: ethers.formatEther(stats.totalRewards),
+    totalVotes: Number(stats.totalVotes || 0),
     averageScore: Number(stats.averageScore)
   };
 }
 
-export async function getUserSubmissions(provider: any, address: string) {
+export async function getUserSubmissions(
+  provider: Eip1193Provider | ethers.BrowserProvider | ethers.JsonRpcSigner,
+  address: string
+): Promise<Array<{
+  imageUrl: string;
+  submitter: string;
+  ipfsHash: string;
+  score: number;
+  isApproved: boolean;
+  timestamp: number;
+  voters: string[];
+  totalVotes: number;
+  totalScore: number;
+}>> {
   if (!provider) throw new Error('No provider available');
 
-  const ethersProvider = new ethers.BrowserProvider(provider);
+  const ethersProvider = provider instanceof ethers.BrowserProvider || provider instanceof ethers.JsonRpcSigner 
+    ? provider 
+    : new ethers.BrowserProvider(provider);
   const contract = new ethers.Contract(
     DIWALI_LIGHTS_CONTRACT_ADDRESS,
     DiwaliLightsABI,
@@ -397,10 +464,19 @@ export async function getUserSubmissions(provider: any, address: string) {
   return await contract.getUserSubmissions(address);
 }
 
-export async function getSubmissionVotes(provider: any, imageUrl: string) {
+export async function getSubmissionVotes(
+  provider: Eip1193Provider | ethers.BrowserProvider | ethers.JsonRpcSigner,
+  imageUrl: string
+): Promise<Array<{
+  voter: string;
+  score: number;
+  timestamp: number;
+}>> {
   if (!provider) throw new Error('No provider available');
 
-  const ethersProvider = new ethers.BrowserProvider(provider);
+  const ethersProvider = provider instanceof ethers.BrowserProvider || provider instanceof ethers.JsonRpcSigner 
+    ? provider 
+    : new ethers.BrowserProvider(provider);
   const contract = new ethers.Contract(
     DIWALI_LIGHTS_CONTRACT_ADDRESS,
     DiwaliLightsABI,
@@ -416,10 +492,20 @@ export async function getSubmissionVotes(provider: any, imageUrl: string) {
   }));
 }
 
-export async function getContractStats(provider: any) {
+export async function getContractStats(
+  provider: ethers.BrowserProvider | ethers.JsonRpcSigner
+): Promise<{
+  totalSubmissions: number;
+  totalApproved: number;
+  totalVotes: number;
+  totalRewardsDistributed: string;
+  activeUsers: number;
+}> {
   if (!provider) throw new Error('No provider available');
 
-  const ethersProvider = new ethers.BrowserProvider(provider);
+  const ethersProvider = provider instanceof ethers.BrowserProvider || provider instanceof ethers.JsonRpcSigner 
+    ? provider 
+    : new ethers.BrowserProvider(provider);
   const contract = new ethers.Contract(
     DIWALI_LIGHTS_CONTRACT_ADDRESS,
     DiwaliLightsABI,
@@ -436,18 +522,23 @@ export async function getContractStats(provider: any) {
 
   return {
     totalSubmissions: Number(totalSubmissions),
+    totalApproved: 0, // Add default value for totalApproved
+    totalVotes: Number(totalVotes),
     totalRewardsDistributed: ethers.formatEther(totalRewards),
-    totalVotesCast: Number(totalVotes),
-    baseRewardAmount: ethers.formatEther(baseReward),
-    bonusMultiplier: Number(bonusMultiplier)
+    activeUsers: 0 // Add default value for activeUsers
   };
 }
 
 // Token utility functions
-export async function getTokenBalance(provider: any, address: string) {
+export async function getTokenBalance(
+  provider: Eip1193Provider | ethers.BrowserProvider | ethers.JsonRpcSigner,
+  address: string
+): Promise<string> {
   if (!provider) throw new Error('No provider available');
 
-  const ethersProvider = new ethers.BrowserProvider(provider);
+  const ethersProvider = provider instanceof ethers.BrowserProvider || provider instanceof ethers.JsonRpcSigner 
+    ? provider 
+    : new ethers.BrowserProvider(provider);
   const contract = new ethers.Contract(
     DIWALI_TOKEN_CONTRACT_ADDRESS,
     DiwaliTokenABI,
@@ -458,17 +549,26 @@ export async function getTokenBalance(provider: any, address: string) {
   return ethers.formatEther(balance);
 }
 
-export async function getTokenInfo(provider: any) {
+export async function getTokenInfo(
+  provider: ethers.BrowserProvider | ethers.JsonRpcSigner
+): Promise<{
+  name: string;
+  symbol: string;
+  decimals: number;
+  totalSupply: string;
+}> {
   if (!provider) throw new Error('No provider available');
 
-  const ethersProvider = new ethers.BrowserProvider(provider);
+  const ethersProvider = provider instanceof ethers.BrowserProvider || provider instanceof ethers.JsonRpcSigner 
+    ? provider 
+    : new ethers.BrowserProvider(provider);
   const contract = new ethers.Contract(
     DIWALI_TOKEN_CONTRACT_ADDRESS,
     DiwaliTokenABI,
     ethersProvider
   );
 
-  const [name, symbol, decimals, totalSupply, maxSupply] = await Promise.all([
+  const [name, symbol, decimals, totalSupply] = await Promise.all([
     contract.name(),
     contract.symbol(),
     contract.decimals(),
@@ -481,6 +581,5 @@ export async function getTokenInfo(provider: any) {
     symbol,
     decimals: Number(decimals),
     totalSupply: ethers.formatEther(totalSupply),
-    maxSupply: ethers.formatEther(maxSupply)
   };
 }
