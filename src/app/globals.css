@@ -2,48 +2,54 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Base brand font */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap');
+
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #0a0a0a;
   --card: #ffffff;
-  --card-foreground: #171717;
+  --card-foreground: #0a0a0a;
   --popover: #ffffff;
-  --popover-foreground: #171717;
-  --primary: #2563eb;
+  --popover-foreground: #0a0a0a;
+  /* Base Blue */
+  --primary: #0052ff;
   --primary-foreground: #ffffff;
-  --secondary: #f3f4f6;
-  --secondary-foreground: #1f2937;
-  --muted: #f3f4f6;
+  /* Subtle gray for surfaces */
+  --secondary: #f5f7fb;
+  --secondary-foreground: #111827;
+  --muted: #eef2ff;
   --muted-foreground: #6b7280;
-  --accent: #f3f4f6;
+  /* Festive accent (gold) */
+  --accent: #f59e0b;
   --accent-foreground: #1f2937;
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
   --border: #e5e7eb;
   --input: #e5e7eb;
-  --ring: #2563eb;
+  --ring: #0052ff;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-    --card: #171717;
-    --card-foreground: #ededed;
-    --popover: #171717;
-    --popover-foreground: #ededed;
+    --background: #06080f;
+    --foreground: #e6edf7;
+    --card: #0b1220;
+    --card-foreground: #e6edf7;
+    --popover: #0b1220;
+    --popover-foreground: #e6edf7;
     --primary: #3b82f6;
     --primary-foreground: #ffffff;
-    --secondary: #1f2937;
-    --secondary-foreground: #f3f4f6;
-    --muted: #1f2937;
+    --secondary: #0f172a;
+    --secondary-foreground: #e2e8f0;
+    --muted: #0f172a;
     --muted-foreground: #9ca3af;
-    --accent: #1f2937;
-    --accent-foreground: #f3f4f6;
+    --accent: #f59e0b;
+    --accent-foreground: #0f172a;
     --destructive: #ef4444;
     --destructive-foreground: #ffffff;
-    --border: #374151;
-    --input: #374151;
+    --border: #1f2937;
+    --input: #1f2937;
     --ring: #3b82f6;
   }
 }
@@ -51,7 +57,12 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: "Inter", Helvetica, Arial, sans-serif;
+  /* Festive subtle radial glows */
+  background-image:
+    radial-gradient(800px 300px at 10% 10%, rgba(245, 158, 11, 0.20), transparent 60%),
+    radial-gradient(600px 240px at 90% 0%, rgba(0, 82, 255, 0.15), transparent 60%);
+  background-attachment: fixed;
+  font-family: "Space Grotesk", Inter, Helvetica, Arial, sans-serif;
 }
 
 * {
