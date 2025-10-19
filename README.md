@@ -3,7 +3,13 @@
 # BasetiveDiwaliBonus - Web3 Festival Experience
 
 **BasetiveDiwaliBonus** is a decentralized mini-app on Base Network that rewards users for sharing bright, Diwali-themed photos. Built with Next.js, Tailwind CSS, and smart contracts, it combines AI-powered photo scoring with community voting to create a festive Web3 experience.
+---
 
+## contract address
+1. DiwaliTocken: 0xDB480bc7Dcb47c1e6D309cED5FD6dB59174F1D2E
+2. DiwaliLights: 0xAFC370bc1fb35c2EEfbEe5250A7fa2AF2541c69c
+
+---
 ## Features
 
 - **Camera Integration**: Capture or upload Diwali celebration photos
